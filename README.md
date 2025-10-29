@@ -1,16 +1,43 @@
-# React + Vite
+# PayConnect Frontend 💳
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+This is the official frontend for **PayConnect**, a modern fintech platform built with **React + Vite**. It offers users a seamless experience for buying airtime, data, paying bills, tracking wallet activity, and more.
 
-Currently, two official plugins are available:
+## 🔧 Tech Stack
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- ⚛️ React (with Hooks and JSX)
+- ⚡ Vite (for blazing-fast builds and HMR)
+- 🎨 Tailwind CSS (for responsive UI)
+- 🎬 Framer Motion (for smooth animations)
+- 📦 React Icons (for consistent iconography)
+- 🔐 React Router (for page navigation)
 
-## React Compiler
+## 🚀 Features
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+- ✅ Animated onboarding flow
+- ✅ Auth gateway with card-style login/signup
+- ✅ Modal-based feedback system (success & error)
+- ✅ Password visibility toggles
+- ✅ Reset password flow
+- ✅ Responsive design for mobile & desktop
 
-## Expanding the ESLint configuration
+## 🧪 Getting Started
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+```bash
+# Install dependencies
+npm install
+
+# Start development server
+npm run dev
+
+# Build for production
+npm run build
+```
+
+🌐 Deployment
+This app is ready to be deployed on Netlify, Vercel, or any static hosting platform.
+
+📦 Backend Integration
+Backend setup will be added soon using Node.js + MongoDB or Firebase. Stay tuned!
+
+🧠 Author
+Built By Habib Shehu
