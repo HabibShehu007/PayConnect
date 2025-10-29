@@ -40,4 +40,4 @@ This app is ready to be deployed on Netlify, Vercel, or any static hosting platf
 Backend setup will be added soon using Node.js + MongoDB or Firebase. Stay tuned!
 
 🧠 Author
-Built By Habib Shehu
+Developed By Habib Shehu
