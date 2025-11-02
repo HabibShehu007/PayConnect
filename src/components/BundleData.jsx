@@ -1,0 +1,108 @@
+const bundleData = {
+  MTN: {
+    Daily: [
+      { name: "Daily 500MB", price: 100 },
+      { name: "Daily 1GB", price: 200 },
+      { name: "Daily 2GB", price: 300 },
+      { name: "Daily 3GB", price: 400 },
+      { name: "Daily 5GB", price: 600 },
+      { name: "Daily 10GB", price: 1000 },
+    ],
+    Weekly: [
+      { name: "Weekly 1GB", price: 300 },
+      { name: "Weekly 2GB", price: 500 },
+      { name: "Weekly 3GB", price: 700 },
+      { name: "Weekly 5GB", price: 1000 },
+      { name: "Weekly 7GB", price: 1300 },
+      { name: "Weekly 10GB", price: 1500 },
+    ],
+    Monthly: [
+      { name: "Monthly 2.5GB", price: 1000 },
+      { name: "Monthly 5GB", price: 2000 },
+      { name: "Monthly 10GB", price: 3500 },
+      { name: "Monthly 15GB", price: 5000 },
+      { name: "Monthly 20GB", price: 6500 },
+      { name: "Monthly 40GB", price: 10000 },
+    ],
+  },
+  Airtel: {
+    Daily: [
+      { name: "Daily 750MB", price: 150 },
+      { name: "Daily 1.5GB", price: 250 },
+      { name: "Daily 2GB", price: 350 },
+      { name: "Daily 3GB", price: 450 },
+      { name: "Daily 5GB", price: 600 },
+      { name: "Daily 10GB", price: 1000 },
+    ],
+    Weekly: [
+      { name: "Weekly 2GB", price: 500 },
+      { name: "Weekly 3GB", price: 700 },
+      { name: "Weekly 5GB", price: 1000 },
+      { name: "Weekly 7GB", price: 1300 },
+      { name: "Weekly 10GB", price: 1500 },
+      { name: "Weekly 15GB", price: 2000 },
+    ],
+    Monthly: [
+      { name: "Monthly 5GB", price: 2000 },
+      { name: "Monthly 10GB", price: 3500 },
+      { name: "Monthly 15GB", price: 5000 },
+      { name: "Monthly 20GB", price: 6500 },
+      { name: "Monthly 30GB", price: 9000 },
+      { name: "Monthly 50GB", price: 12000 },
+    ],
+  },
+  "9mobile": {
+    Daily: [
+      { name: "Daily 1GB", price: 200 },
+      { name: "Daily 2GB", price: 350 },
+      { name: "Daily 3GB", price: 500 },
+      { name: "Daily 5GB", price: 700 },
+      { name: "Daily 7GB", price: 900 },
+      { name: "Daily 10GB", price: 1200 },
+    ],
+    Weekly: [
+      { name: "Weekly 3GB", price: 700 },
+      { name: "Weekly 5GB", price: 1000 },
+      { name: "Weekly 7GB", price: 1300 },
+      { name: "Weekly 10GB", price: 1500 },
+      { name: "Weekly 15GB", price: 2000 },
+      { name: "Weekly 20GB", price: 2500 },
+    ],
+    Monthly: [
+      { name: "Monthly 6GB", price: 2500 },
+      { name: "Monthly 10GB", price: 3500 },
+      { name: "Monthly 15GB", price: 5000 },
+      { name: "Monthly 20GB", price: 6500 },
+      { name: "Monthly 30GB", price: 9000 },
+      { name: "Monthly 50GB", price: 12000 },
+    ],
+  },
+  Glo: {
+    Daily: [
+      { name: "Daily 1.5GB", price: 250 },
+      { name: "Daily 2GB", price: 350 },
+      { name: "Daily 3GB", price: 500 },
+      { name: "Daily 5GB", price: 700 },
+      { name: "Daily 7GB", price: 900 },
+      { name: "Daily 10GB", price: 1200 },
+    ],
+    Weekly: [
+      { name: "Weekly 4GB", price: 800 },
+      { name: "Weekly 6GB", price: 1100 },
+      { name: "Weekly 8GB", price: 1400 },
+      { name: "Weekly 10GB", price: 1700 },
+      { name: "Weekly 15GB", price: 2000 },
+      { name: "Weekly 20GB", price: 2500 },
+    ],
+    Monthly: [
+      { name: "Monthly 10GB", price: 3500 },
+      { name: "Monthly 15GB", price: 5000 },
+      { name: "Monthly 20GB", price: 6500 },
+      { name: "Monthly 30GB", price: 9000 },
+      { name: "Monthly 40GB", price: 11000 },
+      { name: "Monthly 60GB", price: 15000 },
+    ],
+  },
+};
+
+export default bundleData;
