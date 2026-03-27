@@ -51,7 +51,7 @@ export default function WelcomeSection() {
           hidden: { opacity: 0, y: 40 },
           visible: { opacity: 1, y: 0, transition: { staggerChildren: 0.2 } },
         }}
-        className="text-3xl sm:text-5xl lg:text-6xl font-extrabold text-center mb-4 relative z-10"
+        className="text-4xl sm:text-4xl lg:text-6xl font-extrabold text-center mb-4 relative z-10 leading-tight"
       >
         {["Welcome", "to", "PayConnect"].map((word, i) => (
           <motion.span
@@ -72,9 +72,9 @@ export default function WelcomeSection() {
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ delay: 0.5, duration: 1.5 }}
-        className="text-base sm:text-lg lg:text-xl font-semibold text-center max-w-md sm:max-w-xl leading-relaxed tracking-wide relative z-10"
+        className="text-sm sm:text-lg lg:text-xl font-semibold text-center max-w-xs sm:max-w-md lg:max-w-xl leading-relaxed tracking-wide relative z-10"
       >
-        <span className="bg-gradient-to-r from-violet-400 to-indigo-400 bg-clip-text text-transparent drop-shadow-md animate-pulse">
+        <span className="bg-violet-300 bg-clip-text text-transparent drop-shadow-md animate-pulse">
           <Typewriter
             words={[
               "Buy Airtime instantly",
@@ -93,15 +93,12 @@ export default function WelcomeSection() {
         </span>
       </motion.p>
 
-      {/* Orbiting Icons Row */}
-      <div className="flex flex-row justify-center items-center gap-6 mt-8 relative z-10">
+      {/* Key Icons Row (3 only) */}
+      <div className="flex flex-row justify-center items-center gap-4 mt-8 relative z-10">
         {[
-          { icon: <FaMobileAlt />, color: "bg-violet-600" },
-          { icon: <FaWifi />, color: "bg-indigo-600" },
-          { icon: <FaBolt />, color: "bg-cyan-600" },
-          { icon: <FaUniversity />, color: "bg-pink-600" },
-          { icon: <FaWallet />, color: "bg-teal-600" },
-          { icon: <FaChartLine />, color: "bg-emerald-600" },
+          { icon: <FaMobileAlt />, color: "bg-violet-600" }, // Airtime
+          { icon: <FaWifi />, color: "bg-indigo-600" }, // Data
+          { icon: <FaWallet />, color: "bg-teal-600" }, // Wallet
         ].map((item, i) => (
           <motion.div
             key={i}
