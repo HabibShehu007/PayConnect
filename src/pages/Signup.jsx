@@ -7,6 +7,7 @@ import { useNavigate } from "react-router-dom";
 
 export default function Signup() {
   const navigate = useNavigate();
+  const [redirecting, setRedirecting] = useState(false);
   const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
@@ -258,14 +259,20 @@ export default function Signup() {
       <Modal
         isOpen={isOpen}
         onClose={() => {
-          setIsOpen(false);
-          // Only redirect if signup was successful
           if (modalType === "success") {
-            navigate("/login");
+            setRedirecting(true);
+            // Wait 1 second with spinner before redirect
+            setTimeout(() => {
+              setRedirecting(false);
+              navigate("/login");
+            }, 1000);
+          } else {
+            setIsOpen(false);
           }
         }}
         type={modalType}
-        message={modalMessage}
+        message={redirecting ? "Redirecting to login..." : modalMessage}
+        showSpinner={redirecting}
       />
     </div>
   );

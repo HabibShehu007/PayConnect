@@ -6,6 +6,7 @@ import { FiEye, FiEyeOff } from "react-icons/fi";
 import { useNavigate } from "react-router-dom";
 
 export default function Login() {
+  const [redirecting, setRedirecting] = useState(false);
   const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -147,14 +148,20 @@ export default function Login() {
       <Modal
         isOpen={isOpen}
         onClose={() => {
-          setIsOpen(false);
-          // Only redirect if signup was successful
           if (modalType === "success") {
-            navigate("/dashboard");
+            setRedirecting(true);
+            // Wait 1 second with spinner before redirect
+            setTimeout(() => {
+              setRedirecting(false);
+              navigate("/dashboard");
+            }, 1000);
+          } else {
+            setIsOpen(false);
           }
         }}
         type={modalType}
-        message={modalMessage}
+        message={redirecting ? "Redirecting to Dashboard..." : modalMessage}
+        showSpinner={redirecting}
       />
     </div>
   );

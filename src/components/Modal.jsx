@@ -1,7 +1,10 @@
-import { motion, AnimatePresence } from "framer-motion";
-import { FiCheckCircle, FiAlertCircle } from "react-icons/fi";
-
-export default function Modal({ isOpen, onClose, type = "success", message }) {
+export default function Modal({
+  isOpen,
+  onClose,
+  type = "success",
+  message,
+  showSpinner,
+}) {
   return (
     <AnimatePresence>
       {isOpen && (
@@ -35,13 +38,20 @@ export default function Modal({ isOpen, onClose, type = "success", message }) {
                 {message}
               </p>
 
+              {/* Spinner when redirecting */}
+              {showSpinner && (
+                <span className="animate-spin h-6 w-6 border-2 border-violet-400 border-t-transparent rounded-full"></span>
+              )}
+
               {/* Close Button */}
-              <button
-                onClick={onClose}
-                className="w-full sm:w-auto bg-violet-600 hover:bg-violet-700 text-white font-semibold px-6 py-2 rounded-lg shadow-md transition"
-              >
-                Okay
-              </button>
+              {!showSpinner && (
+                <button
+                  onClick={onClose}
+                  className="bg-violet-600 hover:bg-violet-700 text-white font-semibold px-6 py-2 rounded-lg shadow-md transition"
+                >
+                  Okay
+                </button>
+              )}
             </div>
           </motion.div>
         </>
