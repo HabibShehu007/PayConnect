@@ -1,6 +1,7 @@
 // imports at the very top
 import { motion, useMotionValue, useTransform, animate } from "framer-motion";
 import { useInView } from "react-intersection-observer";
+import { useNavigate } from "react-router-dom";
 import { Typewriter } from "react-simple-typewriter";
 import { useEffect } from "react";
 import {
@@ -419,6 +420,8 @@ export function TestimonialSection() {
 }
 
 export function CTASection() {
+  const navigate = useNavigate();
+
   return (
     <section className="w-full bg-slate-800 text-white px-6 py-24 flex flex-col lg:flex-row items-center justify-center gap-12 relative">
       {/* Left Side: Image with looping scale-up reveal */}
@@ -457,6 +460,7 @@ export function CTASection() {
           }}
           transition={{ repeat: Infinity, duration: 3, ease: "easeInOut" }}
           className="bg-violet-600 hover:bg-violet-700 text-white font-semibold px-6 py-3 rounded-lg transition"
+          onClick={() => navigate("/signup")}
         >
           Sign Up Now
         </motion.button>
