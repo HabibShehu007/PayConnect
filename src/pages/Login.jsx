@@ -3,8 +3,10 @@ import { supabase } from "../supabaseClient";
 import Modal from "../components/Modal";
 import { Link } from "react-router-dom";
 import { FiEye, FiEyeOff } from "react-icons/fi";
+import { useNavigate } from "react-router-dom";
 
 export default function Login() {
+  const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
@@ -144,7 +146,13 @@ export default function Login() {
       {/* Modal */}
       <Modal
         isOpen={isOpen}
-        onClose={() => setIsOpen(false)}
+        onClose={() => {
+          setIsOpen(false);
+          // Only redirect if signup was successful
+          if (modalType === "success") {
+            navigate("/dashboard");
+          }
+        }}
         type={modalType}
         message={modalMessage}
       />
