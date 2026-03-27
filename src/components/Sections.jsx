@@ -418,38 +418,24 @@ export function TestimonialSection() {
   );
 }
 
-// Section 6 - Call to Action
 export function CTASection() {
   return (
-    <section className="min-h-screen bg-slate-900 text-white px-6 py-16 flex flex-col lg:flex-row items-center justify-center gap-12">
-      {/* Left Side: Image */}
+    <section className="w-full bg-slate-800 text-white px-6 py-24 flex flex-col lg:flex-row items-center justify-center gap-12 relative">
+      {/* Left Side: Image with looping scale-up reveal */}
       <motion.img
-        src="/images/CTA.png" // <-- your grabbed picture
+        src="/images/CTA.png"
         alt="Happy PayConnect Users"
-        initial={{ opacity: 0, x: -100 }}
-        whileInView={{ opacity: 1, x: 0 }}
-        transition={{
-          type: "spring",
-          stiffness: 120,
-          damping: 20,
-          duration: 1,
-        }}
-        viewport={{ once: true }}
-        className="w-full lg:w-1/2 rounded-xl shadow-lg"
+        initial={{ opacity: 0.8, scale: 0.95 }}
+        animate={{ opacity: [0.8, 1, 0.8], scale: [0.95, 1, 0.95] }}
+        transition={{ repeat: Infinity, duration: 6, ease: "easeInOut" }}
+        className="w-full lg:w-1/2 rounded-xl shadow-lg object-cover h-auto"
       />
 
-      {/* Right Side: Text + CTA */}
+      {/* Right Side: Text + CTA with looping fade/slide */}
       <motion.div
-        initial={{ opacity: 0, x: 100 }}
-        whileInView={{ opacity: 1, x: 0 }}
-        transition={{
-          type: "spring",
-          stiffness: 120,
-          damping: 20,
-          duration: 1,
-          delay: 0.3,
-        }}
-        viewport={{ once: true }}
+        initial={{ opacity: 0.8, y: 10 }}
+        animate={{ opacity: [0.8, 1, 0.8], y: [10, 0, 10] }}
+        transition={{ repeat: Infinity, duration: 8, ease: "easeInOut" }}
         className="flex flex-col items-center lg:items-start text-center lg:text-left gap-6 lg:w-1/2"
       >
         <h2 className="text-3xl sm:text-5xl font-bold text-violet-400">
@@ -460,9 +446,17 @@ export function CTASection() {
           bill payments with PayConnect.
         </p>
         <motion.button
-          whileHover={{ scale: 1.1 }}
+          whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
-          className="bg-violet-600 hover:bg-violet-700 text-white font-semibold px-6 py-3 rounded-lg shadow-lg transition"
+          animate={{
+            boxShadow: [
+              "0 0 10px #7c3aed",
+              "0 0 20px #7c3aed",
+              "0 0 10px #7c3aed",
+            ],
+          }}
+          transition={{ repeat: Infinity, duration: 3, ease: "easeInOut" }}
+          className="bg-violet-600 hover:bg-violet-700 text-white font-semibold px-6 py-3 rounded-lg transition"
         >
           Sign Up Now
         </motion.button>
