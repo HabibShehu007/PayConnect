@@ -2,6 +2,7 @@ import { useState } from "react";
 import { supabase } from "../supabaseClient";
 import Modal from "../components/Modal";
 import { Link } from "react-router-dom";
+import { FiEye, FiEyeOff } from "react-icons/fi";
 
 export default function Signup() {
   const [fullName, setFullName] = useState("");
@@ -9,6 +10,8 @@ export default function Signup() {
   const [phone, setPhone] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   const [isOpen, setIsOpen] = useState(false);
   const [modalType, setModalType] = useState("success");
@@ -19,7 +22,6 @@ export default function Signup() {
     e.preventDefault();
     setLoading(true);
 
-    // Simulate 2s spinner before feedback
     setTimeout(async () => {
       if (password !== confirmPassword) {
         setModalType("error");
@@ -29,28 +31,61 @@ export default function Signup() {
         return;
       }
 
-      const { error } = await supabase.auth.signUp({
+      // Create user in auth
+      const { data, error } = await supabase.auth.signUp({
         email,
         password,
-        options: {
-          data: {
-            full_name: fullName,
-            phone_number: phone,
-          },
-        },
       });
 
       if (error) {
         setModalType("error");
         setModalMessage(error.message);
         setIsOpen(true);
-      } else {
-        setModalType("success");
-        setModalMessage("Account created successfully! You can now log in.");
-        setIsOpen(true);
+        setLoading(false);
+        return;
       }
+
+      // Insert into user_profile table
+      const userId = data.user?.id;
+      if (userId) {
+        const { error: profileError } = await supabase
+          .from("user_profile")
+          .insert({
+            id: userId,
+            full_name: fullName,
+            phone_number: phone,
+          });
+
+        if (profileError) {
+          setModalType("error");
+          setModalMessage(
+            "Signup succeeded but profile insert failed: " +
+              profileError.message,
+          );
+          setIsOpen(true);
+          setLoading(false);
+          return;
+        }
+      }
+
+      setModalType("success");
+      setModalMessage("Account created successfully! You can now log in.");
+      setIsOpen(true);
       setLoading(false);
     }, 2000);
+  };
+
+  const getPasswordStrength = (password) => {
+    let strength = 0;
+
+    if (password.length >= 8) strength++;
+    if (/[A-Z]/.test(password)) strength++;
+    if (/[0-9]/.test(password)) strength++;
+    if (/[^A-Za-z0-9]/.test(password)) strength++;
+
+    if (strength <= 1) return { label: "Weak", color: "bg-red-500" };
+    if (strength === 2) return { label: "Not Bad", color: "bg-yellow-500" };
+    if (strength >= 3) return { label: "Strong", color: "bg-green-500" };
   };
 
   return (
@@ -119,11 +154,11 @@ export default function Signup() {
         </div>
 
         {/* Password */}
-        <div className="relative">
+        <div className="relative space-y-2">
           <input
-            type="password"
+            type={showPassword ? "text" : "password"}
             id="password"
-            className="peer w-full p-3 rounded-lg bg-slate-800 text-white border border-violet-500 focus:outline-none focus:ring-2 focus:ring-violet-400 placeholder-transparent"
+            className="peer w-full p-3 pr-12 rounded-lg bg-slate-800 text-white border border-violet-500 focus:outline-none focus:ring-2 focus:ring-violet-400 placeholder-transparent"
             placeholder="Password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
@@ -134,14 +169,46 @@ export default function Signup() {
           >
             Password
           </label>
+
+          {/* Toggle Button */}
+          <button
+            type="button"
+            onClick={() => setShowPassword(!showPassword)}
+            className="absolute right-3 top-3 text-violet-400 hover:text-violet-300 transition"
+          >
+            {showPassword ? <FiEyeOff size={20} /> : <FiEye size={20} />}
+          </button>
+
+          {/* Strength Bar */}
+          {password && (
+            <div className="w-full h-2 rounded bg-slate-700 overflow-hidden">
+              <div
+                className={`h-2 ${getPasswordStrength(password).color} transition-all duration-500 ease-in-out`}
+                style={{
+                  width: `${
+                    getPasswordStrength(password).label === "Weak"
+                      ? 33
+                      : getPasswordStrength(password).label === "Not Bad"
+                        ? 66
+                        : 100
+                  }%`,
+                }}
+              ></div>
+            </div>
+          )}
+          {password && (
+            <p className="text-sm text-gray-400 transition-colors duration-500">
+              Strength: {getPasswordStrength(password).label}
+            </p>
+          )}
         </div>
 
         {/* Confirm Password */}
         <div className="relative">
           <input
-            type="password"
+            type={showConfirmPassword ? "text" : "password"}
             id="confirmPassword"
-            className="peer w-full p-3 rounded-lg bg-slate-800 text-white border border-violet-500 focus:outline-none focus:ring-2 focus:ring-violet-400 placeholder-transparent"
+            className="peer w-full p-3 pr-12 rounded-lg bg-slate-800 text-white border border-violet-500 focus:outline-none focus:ring-2 focus:ring-violet-400 placeholder-transparent"
             placeholder="Confirm Password"
             value={confirmPassword}
             onChange={(e) => setConfirmPassword(e.target.value)}
@@ -152,6 +219,15 @@ export default function Signup() {
           >
             Confirm Password
           </label>
+
+          {/* Toggle Button */}
+          <button
+            type="button"
+            onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+            className="absolute right-3 top-3 text-violet-400 hover:text-violet-300 transition"
+          >
+            {showConfirmPassword ? <FiEyeOff size={20} /> : <FiEye size={20} />}
+          </button>
         </div>
 
         {/* Submit Button with Spinner */}

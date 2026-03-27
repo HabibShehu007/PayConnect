@@ -16,13 +16,13 @@ export default function Modal({ isOpen, onClose, type = "success", message }) {
 
           {/* Modal Box */}
           <motion.div
-            className="fixed inset-0 flex items-center justify-center z-50"
-            initial={{ scale: 0.8, opacity: 0 }}
+            className="fixed inset-0 flex items-center justify-center z-50 px-4"
+            initial={{ scale: 0.9, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
-            exit={{ scale: 0.8, opacity: 0 }}
+            exit={{ scale: 0.9, opacity: 0 }}
             transition={{ duration: 0.3, ease: "easeOut" }}
           >
-            <div className="bg-slate-900 text-white rounded-xl shadow-lg p-8 w-full max-w-md border border-violet-600 flex flex-col items-center gap-6">
+            <div className="bg-slate-900 text-white rounded-xl shadow-lg p-6 sm:p-8 w-full max-w-sm sm:max-w-md border border-violet-600 flex flex-col items-center gap-6">
               {/* Icon */}
               {type === "success" ? (
                 <FiCheckCircle className="text-green-400 text-5xl" />
@@ -31,14 +31,14 @@ export default function Modal({ isOpen, onClose, type = "success", message }) {
               )}
 
               {/* Message */}
-              <p className="text-center text-lg font-medium text-gray-200">
+              <p className="text-center text-base sm:text-lg font-medium text-gray-200 break-words">
                 {message}
               </p>
 
               {/* Close Button */}
               <button
                 onClick={onClose}
-                className="bg-violet-600 hover:bg-violet-700 text-white font-semibold px-6 py-2 rounded-lg shadow-md transition"
+                className="w-full sm:w-auto bg-violet-600 hover:bg-violet-700 text-white font-semibold px-6 py-2 rounded-lg shadow-md transition"
               >
                 Okay
               </button>
