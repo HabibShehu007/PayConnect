@@ -1,3 +1,6 @@
+import { motion, AnimatePresence } from "framer-motion";
+import { FiCheckCircle, FiAlertCircle } from "react-icons/fi";
+
 export default function Modal({
   isOpen,
   onClose,
