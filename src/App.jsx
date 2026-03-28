@@ -4,6 +4,7 @@ import Signup from "./pages/Signup";
 import Login from "./pages/Login";
 import Dashbaord from "./pages/Dashboard";
 import ProfilePage from "./pages/ProfilePage";
+import AirtimePage from "./pages/AirtimePage";
 
 function App() {
   return (
@@ -19,6 +20,7 @@ function App() {
           {/* Dashboard */}
           <Route path="/dashboard" element={<Dashbaord />} />
           <Route path="/profile" element={<ProfilePage />} />
+          <Route path="/airtime" element={<AirtimePage />} />
         </Routes>
       </div>
     </BrowserRouter>
