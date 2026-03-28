@@ -23,10 +23,15 @@ export default function Modal({
           {/* Modal Box */}
           <motion.div
             className="fixed inset-0 flex items-center justify-center z-50 px-4"
-            initial={{ scale: 0.9, opacity: 0 }}
+            initial={{ scale: 0.8, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
-            exit={{ scale: 0.9, opacity: 0 }}
-            transition={{ duration: 0.3, ease: "easeOut" }}
+            exit={{ scale: 0.8, opacity: 0 }}
+            transition={{
+              type: "spring",
+              stiffness: 500, // higher = snappier
+              damping: 30, // lower = more bounce
+              mass: 0.8, // lighter = quicker
+            }}
           >
             <div className="bg-slate-900 text-white rounded-xl shadow-lg p-6 sm:p-8 w-full max-w-sm sm:max-w-md border border-violet-600 flex flex-col items-center gap-6">
               {/* Icon */}
