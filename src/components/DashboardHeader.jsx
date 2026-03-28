@@ -40,7 +40,7 @@ export default function DashboardHeader() {
     <header className="flex justify-between items-center bg-slate-900 px-6 py-4 border-b border-violet-600 relative">
       {/* Greeting */}
       <h1 className="text-lg font-semibold text-violet-400">
-        Welcome back, {fullName || "User"}
+        Hi, {fullName || "User"}
       </h1>
 
       {/* Hamburger Menu */}
@@ -66,7 +66,7 @@ export default function DashboardHeader() {
 
             {/* Drawer */}
             <motion.div
-              className="fixed top-0 right-0 h-full w-64 bg-slate-900 border-l-2 border-violet-600 z-50 p-6 flex flex-col space-y-6"
+              className="fixed top-0 right-0 h-full w-64 bg-slate-900 border-l-2 border-violet-600 z-50 p-6 flex flex-col"
               initial={{ x: "100%" }}
               animate={{ x: 0 }}
               exit={{ x: "100%" }}
@@ -80,11 +80,23 @@ export default function DashboardHeader() {
                 <FiX size={28} />
               </button>
 
+              {/* Profile Section */}
+              <div className="flex flex-col items-center mt-4 mb-6">
+                <img
+                  src="https://cdn-icons-png.flaticon.com/512/149/149071.png"
+                  alt="Default Avatar"
+                  className="w-20 h-20 rounded-full border-2 border-violet-600 shadow-md"
+                />
+                <p className="mt-2 text-white font-semibold">
+                  {fullName || "User"}
+                </p>
+              </div>
+
               {/* Links */}
-              <nav className="flex flex-col mt-6 space-y-6">
+              <nav className="flex flex-col space-y-4">
                 <a
                   href="/profile"
-                  className="flex items-center gap-3 text-violet-400 hover:text-violet-300 font-semibold"
+                  className="flex items-center gap-3 text-violet-400 hover:text-violet-300 font-semibold transition"
                 >
                   <FiUser size={20} /> Profile
                 </a>
@@ -92,7 +104,7 @@ export default function DashboardHeader() {
 
                 <a
                   href="/settings"
-                  className="flex items-center gap-3 text-violet-400 hover:text-violet-300 font-semibold"
+                  className="flex items-center gap-3 text-violet-400 hover:text-violet-300 font-semibold transition"
                 >
                   <FiSettings size={20} /> Settings
                 </a>
@@ -100,7 +112,7 @@ export default function DashboardHeader() {
 
                 <a
                   href="/transactions"
-                  className="flex items-center gap-3 text-violet-400 hover:text-violet-300 font-semibold"
+                  className="flex items-center gap-3 text-violet-400 hover:text-violet-300 font-semibold transition"
                 >
                   <FiCreditCard size={20} /> Transactions
                 </a>
@@ -108,7 +120,7 @@ export default function DashboardHeader() {
 
                 <a
                   href="/notifications"
-                  className="flex items-center gap-3 text-violet-400 hover:text-violet-300 font-semibold"
+                  className="flex items-center gap-3 text-violet-400 hover:text-violet-300 font-semibold transition"
                 >
                   <FiBell size={20} /> Notifications
                 </a>
@@ -116,7 +128,7 @@ export default function DashboardHeader() {
 
                 <a
                   href="/help"
-                  className="flex items-center gap-3 text-violet-400 hover:text-violet-300 font-semibold"
+                  className="flex items-center gap-3 text-violet-400 hover:text-violet-300 font-semibold transition"
                 >
                   <FiHelpCircle size={20} /> Help
                 </a>
@@ -124,7 +136,7 @@ export default function DashboardHeader() {
 
                 <a
                   href="/logout"
-                  className="flex items-center gap-3 text-violet-400 hover:text-violet-300 font-semibold"
+                  className="flex items-center gap-3 text-violet-400 hover:text-violet-300 font-semibold transition"
                 >
                   <FiLogOut size={20} /> Logout
                 </a>
