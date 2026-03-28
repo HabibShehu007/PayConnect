@@ -15,6 +15,7 @@ import { supabase } from "../supabaseClient";
 export default function DashboardHeader() {
   const [open, setOpen] = useState(false);
   const [fullName, setFullName] = useState("");
+  const [avatarUrl, setAvatarUrl] = useState("");
 
   useEffect(() => {
     const fetchProfile = async () => {
@@ -24,12 +25,13 @@ export default function DashboardHeader() {
       if (user) {
         const { data, error } = await supabase
           .from("user_profile")
-          .select("full_name")
+          .select("full_name, avatar_url")
           .eq("id", user.id)
           .single();
 
         if (!error && data) {
           setFullName(data.full_name);
+          setAvatarUrl(data.avatar_url); // 👈 store avatar
         }
       }
     };
@@ -83,10 +85,14 @@ export default function DashboardHeader() {
               {/* Profile Section */}
               <div className="flex flex-col items-center mt-4 mb-6">
                 <img
-                  src="https://cdn-icons-png.flaticon.com/512/149/149071.png"
-                  alt="Default Avatar"
-                  className="w-20 h-20 rounded-full border-2 border-violet-600 shadow-md"
+                  src={
+                    avatarUrl ||
+                    "https://cdn-icons-png.flaticon.com/512/149/149071.png"
+                  }
+                  alt="Profile Avatar"
+                  className="w-20 h-20 rounded-full border-2 border-violet-600 shadow-md object-cover"
                 />
+
                 <p className="mt-2 text-white font-semibold">
                   {fullName || "User"}
                 </p>
