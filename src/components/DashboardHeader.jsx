@@ -11,11 +11,13 @@ import {
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { supabase } from "../supabaseClient";
+import Modal from "../components/Modal";
 
 export default function DashboardHeader() {
   const [open, setOpen] = useState(false);
   const [fullName, setFullName] = useState("");
   const [avatarUrl, setAvatarUrl] = useState("");
+  const [showLogoutModal, setShowLogoutModal] = useState(false);
 
   useEffect(() => {
     const fetchProfile = async () => {
@@ -37,6 +39,11 @@ export default function DashboardHeader() {
     };
     fetchProfile();
   }, []);
+
+  const handleLogout = async () => {
+    await supabase.auth.signOut();
+    window.location.href = "/login";
+  };
 
   return (
     <header className="flex justify-between items-center bg-slate-900 px-6 py-4 border-b border-violet-600 relative">
@@ -141,7 +148,8 @@ export default function DashboardHeader() {
                 <hr className="border-violet-600/40" />
 
                 <a
-                  href="/logout"
+                  href="#"
+                  onClick={() => setShowLogoutModal(true)}
                   className="flex items-center gap-3 text-violet-400 hover:text-violet-300 font-semibold transition"
                 >
                   <FiLogOut size={20} /> Logout
@@ -151,6 +159,32 @@ export default function DashboardHeader() {
           </>
         )}
       </AnimatePresence>
+      {showLogoutModal && (
+        <Modal
+          isOpen={showLogoutModal}
+          onClose={() => setShowLogoutModal(false)}
+          type="error"
+          title="Confirm Logout"
+        >
+          <p className="text-gray-200 mb-6">
+            Are you sure you want to log out?
+          </p>
+          <div className="flex justify-end gap-3">
+            <button
+              onClick={() => setShowLogoutModal(false)}
+              className="px-4 py-2 rounded-lg bg-gray-600 hover:bg-gray-500 transition"
+            >
+              Cancel
+            </button>
+            <button
+              onClick={handleLogout}
+              className="px-4 py-2 rounded-lg bg-red-600 hover:bg-red-700 transition"
+            >
+              Logout
+            </button>
+          </div>
+        </Modal>
+      )}
     </header>
   );
 }
