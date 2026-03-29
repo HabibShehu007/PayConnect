@@ -5,7 +5,9 @@ import Login from "./pages/Login";
 import Dashbaord from "./pages/Dashboard";
 import ProfilePage from "./pages/ProfilePage";
 import AirtimePage from "./pages/AirtimePage";
-
+import TransactionsPage from "./pages/TransactionsPage";
+import ActivityPage from "./pages/Activity";
+import AddMoney from "./pages/AddMoney";
 function App() {
   return (
     <BrowserRouter>
@@ -21,6 +23,9 @@ function App() {
           <Route path="/dashboard" element={<Dashbaord />} />
           <Route path="/profile" element={<ProfilePage />} />
           <Route path="/airtime" element={<AirtimePage />} />
+          <Route path="/transactions" element={<TransactionsPage />} />
+          <Route path="/activity" element={<ActivityPage />} />
+          <Route path="/add-money" element={<AddMoney />} />
         </Routes>
       </div>
     </BrowserRouter>

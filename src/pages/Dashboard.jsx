@@ -1,9 +1,13 @@
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import DashboardLayout from "../layouts/DashboardLayout";
 import Card from "../components/Card";
 import BalanceCard from "../components/BalanceCard";
 import RecentActivity from "../components/RecentActivity";
 import InfoPanel from "../components/InfoPanel";
 import AdSlider from "../components/AdSlider";
+import Modal from "../components/Modal";
+
 import {
   FiSmartphone,
   FiWifi,
@@ -29,10 +33,23 @@ const activities = [
 ];
 
 export default function Dashboard({ user }) {
+  const navigate = useNavigate();
+  const userBalance = user?.wallet_balance || 0;
+  const [isRestricted, setIsRestricted] = useState(false);
+
+  // Handler for restricted pages
+  const handleRestrictedNav = (path) => {
+    if (userBalance < 50) {
+      setIsRestricted(true);
+    } else {
+      navigate(path);
+    }
+  };
+
   return (
     <DashboardLayout user={user}>
       {/* Balance Card */}
-      <BalanceCard balance="25,000.00" />
+      <BalanceCard />
 
       {/* Recent Activity */}
       <RecentActivity activities={activities} />
@@ -43,13 +60,13 @@ export default function Dashboard({ user }) {
           icon={<FiSmartphone />}
           title="Airtime"
           description="Buy airtime instantly."
-          link="/airtime"
+          onClick={() => handleRestrictedNav("/airtime")}
         />
         <Card
           icon={<FiWifi />}
           title="Data"
           description="Purchase data bundles."
-          link="/data"
+          onClick={() => handleRestrictedNav("/data")}
         />
         <Card
           icon={<FiBookOpen />}
@@ -76,8 +93,28 @@ export default function Dashboard({ user }) {
           link="/support"
         />
       </div>
+
       <InfoPanel />
       <AdSlider />
+
+      {/* Restriction Modal */}
+      <Modal
+        isOpen={isRestricted}
+        onClose={() => setIsRestricted(false)}
+        type="error"
+        title="Insufficient Balance"
+        message="You need at least ₦50 in your wallet to buy airtime or data."
+      >
+        <button
+          onClick={() => {
+            setIsRestricted(false);
+            // 👉 Trigger Flutterwave top-up flow here
+          }}
+          className="bg-violet-600 hover:bg-violet-700 text-white font-semibold px-6 py-2 rounded-lg shadow-md transition"
+        >
+          Fund Wallet Now
+        </button>
+      </Modal>
     </DashboardLayout>
   );
 }
