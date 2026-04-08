@@ -2,7 +2,6 @@ import { useState, useEffect } from "react";
 import { FiArrowLeft } from "react-icons/fi";
 import { Link } from "react-router-dom";
 import AdSlider from "../components/AdSlider";
-import NetworkDetector from "../components/NetworkDetector";
 import Modal from "../components/Modal";
 import { createClient } from "@supabase/supabase-js";
 
@@ -11,9 +10,39 @@ const supabase = createClient(
   import.meta.env.VITE_SUPABASE_ANON_KEY,
 );
 
-export default function AirtimePage() {
+// MTN Data Plans
+const mtnPlans = {
+  daily: [
+    { name: "100MB Daily", price: 100 },
+    { name: "200MB Daily", price: 200 },
+    { name: "500MB Daily", price: 300 },
+    { name: "1GB Daily", price: 500 },
+    { name: "2GB Daily", price: 700 },
+    { name: "5GB Daily", price: 1000 },
+  ],
+  weekly: [
+    { name: "1GB Weekly", price: 500 },
+    { name: "2GB Weekly", price: 800 },
+    { name: "5GB Weekly", price: 1500 },
+    { name: "10GB Weekly", price: 2500 },
+    { name: "15GB Weekly", price: 3500 },
+    { name: "20GB Weekly", price: 4500 },
+  ],
+  monthly: [
+    { name: "2GB Monthly", price: 1000 },
+    { name: "5GB Monthly", price: 2000 },
+    { name: "10GB Monthly", price: 3500 },
+    { name: "20GB Monthly", price: 6000 },
+    { name: "40GB Monthly", price: 10000 },
+    { name: "100GB Monthly", price: 20000 },
+  ],
+};
+
+export default function DataPage() {
+  const [network, setNetwork] = useState("MTN"); // ✅ define network state
+  const [planType, setPlanType] = useState("daily");
+  const [selectedPlan, setSelectedPlan] = useState(null);
   const [phone, setPhone] = useState("");
-  const [amount, setAmount] = useState("");
   const [userId, setUserId] = useState(null);
   const [balance, setBalance] = useState(0);
 
@@ -23,8 +52,6 @@ export default function AirtimePage() {
   const [showResultModal, setShowResultModal] = useState(false);
   const [modalType, setModalType] = useState("success");
   const [modalMessage, setModalMessage] = useState("");
-
-  const quickAmounts = [50, 100, 200, 500, 1000, 2000];
 
   // ✅ Get logged-in user and balance
   useEffect(() => {
@@ -46,9 +73,9 @@ export default function AirtimePage() {
   }, []);
 
   const handlePurchase = async () => {
-    const amt = parseInt(amount);
+    if (!phone || !selectedPlan) return;
 
-    if (!phone || !amt) return;
+    const amt = selectedPlan.price;
 
     if (balance < amt) {
       setModalType("error");
@@ -70,7 +97,9 @@ export default function AirtimePage() {
     } else {
       setBalance(newBalance);
       setModalType("success");
-      setModalMessage(`Airtime purchase of ₦${amt} successful!`);
+      setModalMessage(
+        `Data purchase successful: ${selectedPlan.name} for ₦${amt}`,
+      );
     }
     setShowResultModal(true);
   };
@@ -97,71 +126,90 @@ export default function AirtimePage() {
           >
             <FiArrowLeft size={28} />
           </Link>
-          <h1 className="text-2xl font-bold text-violet-400">Airtime</h1>
+          <h1 className="text-2xl font-bold text-violet-400">Data</h1>
         </div>
 
         {/* Ads */}
         <AdSlider
           banners={[
-            { img: "/images/airtime1.png", text: "Recharge instantly" },
-            { img: "/images/airtime2.png", text: "Earn cashback" },
+            { img: "/images/data1.png", text: "Buy data instantly" },
+            { img: "/images/data2.png", text: "Stay connected always" },
           ]}
         />
 
-        {/* Phone Number */}
-        <div className="bg-gray-100/10 rounded-lg p-5">
-          <div className="bg-slate-800 rounded-xl shadow-lg flex items-center overflow-hidden">
-            <NetworkDetector phone={phone} />
-            <input
-              type="tel"
-              value={phone}
-              onChange={(e) => setPhone(e.target.value)}
-              className="flex-1 p-4 bg-slate-700 text-white focus:outline-none text-lg"
-              placeholder="Enter phone number"
-            />
-          </div>
-        </div>
-
-        {/* Quick Amounts */}
-        <div className="bg-gray-100/10 rounded-lg p-5">
-          <h2 className="text-gray-300 mb-4 text-lg font-semibold">
-            Quick Top‑Up
-          </h2>
-          <div className="grid grid-cols-3 gap-5">
-            {quickAmounts.map((amt) => (
-              <button
-                key={amt}
-                onClick={() => setAmount(amt)}
-                className="bg-slate-700 hover:bg-slate-600 text-violet-400 font-bold py-5 rounded-lg shadow-md transition text-lg"
-              >
-                ₦{amt}
-              </button>
-            ))}
-          </div>
-        </div>
-
-        {/* Custom Amount */}
-        <div className="bg-gray-100/10 rounded-lg p-5">
-          <h2 className="text-gray-300 mb-4 text-lg font-semibold">
-            Enter Amount
-          </h2>
-          <div className="flex items-center bg-slate-800 rounded-lg shadow-lg overflow-hidden">
-            <input
-              type="number"
-              value={amount}
-              onChange={(e) => setAmount(e.target.value)}
-              className="flex-1 p-4 bg-slate-700 text-white focus:outline-none text-lg"
-              placeholder="Enter amount"
-            />
+        {/* Network Provider Row */}
+        <div className="grid grid-cols-4 gap-4">
+          {["MTN", "Airtel", "Glo", "9mobile"].map((net) => (
             <button
-              disabled={!phone || !amount}
-              onClick={() => setShowPinModal(true)}
-              className="bg-violet-600 hover:bg-violet-700 text-white font-semibold px-6 py-3 text-lg transition"
+              key={net}
+              onClick={() => setNetwork(net)} // for now only MTN has plans wired
+              className={`p-4 rounded-lg shadow-md font-bold text-center transition ${
+                network === net
+                  ? "bg-violet-600 text-white"
+                  : "bg-slate-700 text-violet-400"
+              }`}
             >
-              Pay
+              {net}
             </button>
-          </div>
+          ))}
         </div>
+
+        {/* Plan Type Toggle */}
+        <div className="bg-gray-100/10 rounded-lg p-5 flex gap-4">
+          {["daily", "weekly", "monthly"].map((type) => (
+            <button
+              key={type}
+              onClick={() => setPlanType(type)}
+              className={`flex-1 py-3 rounded-lg font-semibold ${
+                planType === type
+                  ? "bg-violet-600 text-white"
+                  : "bg-slate-700 text-violet-400"
+              }`}
+            >
+              {type.charAt(0).toUpperCase() + type.slice(1)}
+            </button>
+          ))}
+        </div>
+
+        {/* Plans Grid */}
+        <div className="grid grid-cols-3 gap-5">
+          {mtnPlans[planType].map((plan) => (
+            <button
+              key={plan.name}
+              onClick={() => setSelectedPlan(plan)}
+              className={`p-4 rounded-lg shadow-md transition text-center ${
+                selectedPlan?.name === plan.name
+                  ? "bg-violet-600 text-white"
+                  : "bg-slate-700 text-violet-400"
+              }`}
+            >
+              <p className="font-bold">
+                {network} {plan.name}
+              </p>
+              <p>₦{plan.price}</p>
+            </button>
+          ))}
+        </div>
+
+        {/* Recipient Phone */}
+        <div className="bg-gray-100/10 rounded-lg p-5">
+          <input
+            type="tel"
+            value={phone}
+            onChange={(e) => setPhone(e.target.value)}
+            className="w-full p-4 bg-slate-700 text-white focus:outline-none text-lg rounded-lg"
+            placeholder="Enter recipient phone number"
+          />
+        </div>
+
+        {/* Pay Button */}
+        <button
+          disabled={!phone || !selectedPlan}
+          onClick={() => setShowPinModal(true)}
+          className="bg-violet-600 hover:bg-violet-700 text-white font-semibold px-6 py-3 text-lg transition rounded-lg"
+        >
+          Pay
+        </button>
 
         <div className="h-20"></div>
       </div>

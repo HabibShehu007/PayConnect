@@ -37,13 +37,8 @@ export default function Dashboard({ user }) {
   const userBalance = user?.wallet_balance || 0;
   const [isRestricted, setIsRestricted] = useState(false);
 
-  // Handler for restricted pages
   const handleRestrictedNav = (path) => {
-    if (userBalance < 50) {
-      setIsRestricted(true);
-    } else {
-      navigate(path);
-    }
+    navigate(path);
   };
 
   return (
