@@ -6,6 +6,8 @@ import {
   FiSmartphone,
   FiWifi,
   FiPlusCircle,
+  FiZap,
+  FiBookOpen,
 } from "react-icons/fi";
 
 export default function RecentActivity() {
@@ -54,6 +56,8 @@ export default function RecentActivity() {
     if (service === "airtime") return "Airtime Purchase";
     if (service === "data") return "Data Bundle";
     if (service === "credit") return "Wallet Funding";
+    if (service === "utility") return <FiZap />; // ⚡ Electricity, water, cable, etc.
+    if (service === "exam") return <FiBookOpen />;
     return "Activity";
   };
 

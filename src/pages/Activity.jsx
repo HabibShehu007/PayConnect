@@ -7,6 +7,8 @@ import {
   FiClock,
   FiXCircle,
   FiArrowLeft,
+  FiZap,
+  FiBookOpen,
 } from "react-icons/fi";
 import { Link } from "react-router-dom";
 
@@ -62,6 +64,8 @@ export default function ActivityPage() {
   const getIcon = (service) => {
     if (service === "airtime") return <FiSmartphone />;
     if (service === "data") return <FiWifi />;
+    if (service === "utility") return <FiZap />; // ⚡ Electricity, water, cable, etc.
+    if (service === "exam") return <FiBookOpen />; // 📖 Exam registration, results, etc.
     return null;
   };
 
