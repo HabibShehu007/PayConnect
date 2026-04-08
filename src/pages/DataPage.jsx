@@ -3,12 +3,7 @@ import { FiArrowLeft } from "react-icons/fi";
 import { Link } from "react-router-dom";
 import AdSlider from "../components/AdSlider";
 import Modal from "../components/Modal";
-import { createClient } from "@supabase/supabase-js";
-
-const supabase = createClient(
-  import.meta.env.VITE_SUPABASE_URL,
-  import.meta.env.VITE_SUPABASE_ANON_KEY,
-);
+import { supabase } from "../supabaseClient";
 
 // MTN Data Plans
 const mtnPlans = {
@@ -55,21 +50,35 @@ export default function DataPage() {
 
   // ✅ Get logged-in user and balance
   useEffect(() => {
-    const fetchUser = async () => {
-      const { data } = await supabase.auth.getUser();
-      const id = data?.user?.id;
-      setUserId(id);
+    let mounted = true;
 
-      if (id) {
+    const fetchUser = async () => {
+      const {
+        data: { session },
+        error,
+      } = await supabase.auth.getSession();
+      if (error) {
+        console.error("Auth error:", error);
+        return;
+      }
+      const id = session?.user?.id;
+      if (mounted && id) {
+        setUserId(id);
+
         const { data: profile } = await supabase
           .from("user_profile")
           .select("wallet_balance")
           .eq("id", id)
           .single();
+
         setBalance(profile?.wallet_balance || 0);
       }
     };
+
     fetchUser();
+    return () => {
+      mounted = false;
+    };
   }, []);
 
   const handlePurchase = async () => {
@@ -80,6 +89,16 @@ export default function DataPage() {
     if (balance < amt) {
       setModalType("error");
       setModalMessage("Insufficient balance to complete this purchase.");
+
+      // ❌ Log failed attempt into activities
+      await supabase.from("activities").insert({
+        user_id: userId,
+        service: "data",
+        amount: amt,
+        status: "failed",
+        meta: { phone, plan: selectedPlan.name, network },
+      });
+
       setShowResultModal(true);
       return;
     }
@@ -94,13 +113,32 @@ export default function DataPage() {
     if (error) {
       setModalType("error");
       setModalMessage("Transaction failed. Please try again.");
+
+      // ❌ Log failed attempt
+      await supabase.from("activities").insert({
+        user_id: userId,
+        service: "data",
+        amount: amt,
+        status: "failed",
+        meta: { phone, plan: selectedPlan.name, network },
+      });
     } else {
       setBalance(newBalance);
       setModalType("success");
       setModalMessage(
         `Data purchase successful: ${selectedPlan.name} for ₦${amt}`,
       );
+
+      // ✅ Log successful purchase
+      await supabase.from("activities").insert({
+        user_id: userId,
+        service: "data",
+        amount: amt,
+        status: "success",
+        meta: { phone, plan: selectedPlan.name, network },
+      });
     }
+
     setShowResultModal(true);
   };
 

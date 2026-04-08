@@ -22,10 +22,9 @@ export default function ActivityPage() {
 
       if (user) {
         let query = supabase
-          .from("transactions")
-          .select("amount, type, status, created_at")
+          .from("activities") // ✅ now listening to activities table
+          .select("amount, service, status, created_at, meta")
           .eq("user_id", user.id)
-          .in("type", ["airtime", "data"]) // ✅ only spending activities
           .order("created_at", { ascending: false });
 
         if (filter !== "all") {
@@ -40,12 +39,29 @@ export default function ActivityPage() {
     };
 
     fetchActivities();
+
+    // ✅ Real-time subscription: listen for inserts/updates
+    const channel = supabase
+      .channel("activities-changes")
+      .on(
+        "postgres_changes",
+        { event: "*", schema: "public", table: "activities" },
+        (payload) => {
+          // Re-fetch activities when something changes
+          fetchActivities();
+        },
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
   }, [filter]);
 
   // Helper: pick icon
-  const getIcon = (type) => {
-    if (type === "airtime") return <FiSmartphone />;
-    if (type === "data") return <FiWifi />;
+  const getIcon = (service) => {
+    if (service === "airtime") return <FiSmartphone />;
+    if (service === "data") return <FiWifi />;
     return null;
   };
 
@@ -60,7 +76,7 @@ export default function ActivityPage() {
 
   return (
     <div className="min-h-screen bg-slate-900 text-white p-6">
-      {/* Header with Back Arrow */}
+      {/* Header */}
       <div className="flex items-center gap-3 mb-6">
         <Link
           to="/dashboard"
@@ -73,48 +89,27 @@ export default function ActivityPage() {
         </h1>
       </div>
 
-      {/* Filter Buttons Centered */}
+      {/* Filter Buttons */}
       <div className="flex justify-center gap-3 mb-8">
-        <button
-          onClick={() => setFilter("all")}
-          className={`px-4 py-2 rounded-lg font-semibold transition ${
-            filter === "all"
-              ? "bg-violet-600 text-white"
-              : "bg-slate-800 hover:bg-slate-700 text-violet-400"
-          }`}
-        >
-          All
-        </button>
-        <button
-          onClick={() => setFilter("success")}
-          className={`px-4 py-2 rounded-lg font-semibold transition ${
-            filter === "success"
-              ? "bg-green-600 text-white"
-              : "bg-slate-800 hover:bg-slate-700 text-green-400"
-          }`}
-        >
-          Success
-        </button>
-        <button
-          onClick={() => setFilter("pending")}
-          className={`px-4 py-2 rounded-lg font-semibold transition ${
-            filter === "pending"
-              ? "bg-yellow-500 text-white"
-              : "bg-slate-800 hover:bg-slate-700 text-yellow-400"
-          }`}
-        >
-          Pending
-        </button>
-        <button
-          onClick={() => setFilter("failed")}
-          className={`px-4 py-2 rounded-lg font-semibold transition ${
-            filter === "failed"
-              ? "bg-red-600 text-white"
-              : "bg-slate-800 hover:bg-slate-700 text-red-400"
-          }`}
-        >
-          Failed
-        </button>
+        {["all", "success", "pending", "failed"].map((status) => (
+          <button
+            key={status}
+            onClick={() => setFilter(status)}
+            className={`px-4 py-2 rounded-lg font-semibold transition ${
+              filter === status
+                ? status === "success"
+                  ? "bg-green-600 text-white"
+                  : status === "pending"
+                    ? "bg-yellow-500 text-white"
+                    : status === "failed"
+                      ? "bg-red-600 text-white"
+                      : "bg-violet-600 text-white"
+                : "bg-slate-800 hover:bg-slate-700 text-violet-400"
+            }`}
+          >
+            {status.charAt(0).toUpperCase() + status.slice(1)}
+          </button>
+        ))}
       </div>
 
       {/* Activity List */}
@@ -125,16 +120,18 @@ export default function ActivityPage() {
               key={index}
               className="flex justify-between items-center bg-slate-800 p-4 rounded-lg shadow-md border border-violet-600"
             >
-              {/* Left side: icon + title + date */}
+              {/* Left side */}
               <div className="flex items-center gap-3">
                 <span className="text-violet-400 text-2xl">
-                  {getIcon(act.type)}
+                  {getIcon(act.service)}
                 </span>
                 <div>
                   <p className="font-semibold capitalize">
-                    {act.type === "airtime"
+                    {act.service === "airtime"
                       ? "Airtime Purchase"
-                      : "Data Bundle"}
+                      : act.service === "data"
+                        ? "Data Bundle"
+                        : act.service}
                   </p>
                   <p className="text-gray-400 text-sm">
                     {new Date(act.created_at).toLocaleDateString()}
@@ -142,9 +139,17 @@ export default function ActivityPage() {
                 </div>
               </div>
 
-              {/* Right side: amount + status */}
+              {/* Right side */}
               <div className="flex items-center gap-3">
-                <p className="font-bold text-red-400">
+                <p
+                  className={`font-bold ${
+                    act.status === "success"
+                      ? "text-green-400"
+                      : act.status === "pending"
+                        ? "text-yellow-400"
+                        : "text-red-400"
+                  }`}
+                >
                   ₦{Number(act.amount).toFixed(2)}
                 </p>
                 {getStatusIcon(act.status)}

@@ -12,15 +12,18 @@ export default function RecentActivity() {
   const [activities, setActivities] = useState([]);
 
   useEffect(() => {
+    let mounted = true; // ✅ guard against unmounts
+
     const fetchActivities = async () => {
       const {
-        data: { user },
-      } = await supabase.auth.getUser();
+        data: { session },
+      } = await supabase.auth.getSession(); // ✅ use getSession instead of getUser
+      const user = session?.user;
 
-      if (user) {
+      if (mounted && user) {
         const { data, error } = await supabase
-          .from("transactions")
-          .select("amount, type, status, created_at")
+          .from("activities")
+          .select("amount, service, status, created_at, meta")
           .eq("user_id", user.id)
           .order("created_at", { ascending: false })
           .limit(2);
@@ -32,22 +35,26 @@ export default function RecentActivity() {
     };
 
     fetchActivities();
+
+    return () => {
+      mounted = false; // ✅ cleanup
+    };
   }, []);
 
   // Helper to pick icon
-  const getIcon = (type) => {
-    if (type === "airtime") return <FiSmartphone />;
-    if (type === "data") return <FiWifi />;
-    if (type === "credit") return <FiPlusCircle />;
+  const getIcon = (service) => {
+    if (service === "airtime") return <FiSmartphone />;
+    if (service === "data") return <FiWifi />;
+    if (service === "credit") return <FiPlusCircle />;
     return null;
   };
 
   // Helper to pick label
-  const getLabel = (type) => {
-    if (type === "airtime") return "Airtime Purchase";
-    if (type === "data") return "Data Bundle";
-    if (type === "credit") return "Wallet Funding";
-    return "Transaction";
+  const getLabel = (service) => {
+    if (service === "airtime") return "Airtime Purchase";
+    if (service === "data") return "Data Bundle";
+    if (service === "credit") return "Wallet Funding";
+    return "Activity";
   };
 
   return (
@@ -71,23 +78,27 @@ export default function RecentActivity() {
               key={index}
               className="flex justify-between items-center bg-slate-800 p-4 rounded-lg"
             >
-              {/* Left side: icon + title + date */}
+              {/* Left side */}
               <div className="flex items-center gap-3">
                 <span className="text-violet-400 text-2xl">
-                  {getIcon(activity.type)}
+                  {getIcon(activity.service)}
                 </span>
                 <div>
-                  <p className="font-semibold">{getLabel(activity.type)}</p>
+                  <p className="font-semibold">{getLabel(activity.service)}</p>
                   <p className="text-gray-400 text-sm">
                     {new Date(activity.created_at).toLocaleDateString()}
                   </p>
                 </div>
               </div>
 
-              {/* Right side: amount */}
+              {/* Right side */}
               <p
                 className={`font-bold ${
-                  activity.type === "credit" ? "text-green-400" : "text-red-400"
+                  activity.status === "success"
+                    ? "text-green-400"
+                    : activity.status === "pending"
+                      ? "text-yellow-400"
+                      : "text-red-400"
                 }`}
               >
                 ₦{Number(activity.amount).toFixed(2)}

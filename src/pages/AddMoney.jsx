@@ -6,12 +6,7 @@ import {
   FiCheckCircle,
   FiXCircle,
 } from "react-icons/fi";
-import { createClient } from "@supabase/supabase-js";
-
-const supabase = createClient(
-  import.meta.env.VITE_SUPABASE_URL,
-  import.meta.env.VITE_SUPABASE_ANON_KEY,
-);
+import { supabase } from "../supabaseClient";
 
 // Payment Modal for entering details
 function PaymentModal({ onClose, onSubmit }) {
@@ -144,11 +139,14 @@ export default function AddMoney() {
   // ✅ Get logged-in user ID from Supabase Auth
   useEffect(() => {
     const fetchUser = async () => {
-      const { data, error } = await supabase.auth.getUser();
+      const {
+        data: { session },
+        error,
+      } = await supabase.auth.getSession();
       if (error) {
         console.error("Auth error:", error);
       } else {
-        setUserId(data?.user?.id);
+        setUserId(session?.user?.id);
       }
     };
     fetchUser();
@@ -158,6 +156,15 @@ export default function AddMoney() {
     if (!userId) {
       setResultMessage("No user logged in.");
       setResultSuccess(false);
+
+      // ❌ Log failed funding attempt
+      await supabase.from("transactions").insert({
+        user_id: userId,
+        type: "credit",
+        amount,
+        status: "failed",
+      });
+
       setShowResultModal(true);
       return;
     }
@@ -166,12 +173,20 @@ export default function AddMoney() {
     const { data, error } = await supabase
       .from("user_profile")
       .select("wallet_balance")
-      .eq("id", userId) // ✅ use logged-in user id
+      .eq("id", userId)
       .single();
 
     if (error) {
       setResultMessage("Failed to fetch balance.");
       setResultSuccess(false);
+
+      // ❌ Log failed funding attempt
+      await supabase.from("transactions").insert({
+        user_id: userId,
+        type: "credit",
+        amount,
+        status: "failed",
+      });
     } else {
       const currentBalance = data?.wallet_balance || 0;
       const newBalance = currentBalance + amount;
@@ -179,14 +194,30 @@ export default function AddMoney() {
       const { error: updateError } = await supabase
         .from("user_profile")
         .update({ wallet_balance: newBalance })
-        .eq("id", userId); // ✅ use logged-in user id
+        .eq("id", userId);
 
       if (updateError) {
         setResultMessage("Failed to update balance.");
         setResultSuccess(false);
+
+        // ❌ Log failed funding attempt
+        await supabase.from("transactions").insert({
+          user_id: userId,
+          type: "credit",
+          amount,
+          status: "failed",
+        });
       } else {
         setResultMessage(`Wallet funded successfully with ₦${amount}!`);
         setResultSuccess(true);
+
+        // ✅ Log successful funding
+        await supabase.from("transactions").insert({
+          user_id: userId,
+          type: "credit",
+          amount,
+          status: "success",
+        });
       }
     }
 

@@ -14,12 +14,20 @@ export default function TransactionsPage() {
   const [filter, setFilter] = useState("all");
 
   useEffect(() => {
+    let mounted = true;
+
     const fetchTransactions = async () => {
       const {
-        data: { user },
-      } = await supabase.auth.getUser();
+        data: { session },
+        error,
+      } = await supabase.auth.getSession();
+      if (error) {
+        console.error("Auth error:", error);
+        return;
+      }
 
-      if (user) {
+      const user = session?.user;
+      if (mounted && user) {
         let query = supabase
           .from("transactions")
           .select("amount, type, status, created_at")
@@ -31,14 +39,17 @@ export default function TransactionsPage() {
           query = query.eq("status", filter);
         }
 
-        const { data, error } = await query;
-        if (!error && data) {
+        const { data, error: txError } = await query;
+        if (!txError && data) {
           setTransactions(data);
         }
       }
     };
 
     fetchTransactions();
+    return () => {
+      mounted = false;
+    };
   }, [filter]);
 
   // Helper: pick icon
@@ -55,7 +66,7 @@ export default function TransactionsPage() {
 
   return (
     <div className="min-h-screen bg-slate-900 text-white p-6">
-      {/* Header with Back Arrow */}
+      {/* Header */}
       <div className="flex items-center gap-3 mb-6">
         <Link
           to="/dashboard"
@@ -68,48 +79,27 @@ export default function TransactionsPage() {
         </h1>
       </div>
 
-      {/* Filter Buttons Centered */}
+      {/* Filter Buttons */}
       <div className="flex justify-center gap-3 mb-8">
-        <button
-          onClick={() => setFilter("all")}
-          className={`px-4 py-2 rounded-lg font-semibold transition ${
-            filter === "all"
-              ? "bg-violet-600 text-white"
-              : "bg-slate-800 hover:bg-slate-700 text-violet-400"
-          }`}
-        >
-          All
-        </button>
-        <button
-          onClick={() => setFilter("success")}
-          className={`px-4 py-2 rounded-lg font-semibold transition ${
-            filter === "success"
-              ? "bg-green-600 text-white"
-              : "bg-slate-800 hover:bg-slate-700 text-green-400"
-          }`}
-        >
-          Success
-        </button>
-        <button
-          onClick={() => setFilter("pending")}
-          className={`px-4 py-2 rounded-lg font-semibold transition ${
-            filter === "pending"
-              ? "bg-yellow-500 text-white"
-              : "bg-slate-800 hover:bg-slate-700 text-yellow-400"
-          }`}
-        >
-          Pending
-        </button>
-        <button
-          onClick={() => setFilter("failed")}
-          className={`px-4 py-2 rounded-lg font-semibold transition ${
-            filter === "failed"
-              ? "bg-red-600 text-white"
-              : "bg-slate-800 hover:bg-slate-700 text-red-400"
-          }`}
-        >
-          Failed
-        </button>
+        {["all", "success", "pending", "failed"].map((status) => (
+          <button
+            key={status}
+            onClick={() => setFilter(status)}
+            className={`px-4 py-2 rounded-lg font-semibold transition ${
+              filter === status
+                ? status === "success"
+                  ? "bg-green-600 text-white"
+                  : status === "pending"
+                    ? "bg-yellow-500 text-white"
+                    : status === "failed"
+                      ? "bg-red-600 text-white"
+                      : "bg-violet-600 text-white"
+                : "bg-slate-800 hover:bg-slate-700 text-violet-400"
+            }`}
+          >
+            {status.charAt(0).toUpperCase() + status.slice(1)}
+          </button>
+        ))}
       </div>
 
       {/* Transaction List */}
@@ -120,20 +110,28 @@ export default function TransactionsPage() {
               key={index}
               className="flex justify-between items-center bg-slate-800 p-4 rounded-lg shadow-md border border-violet-600"
             >
-              {/* Left side: icon + title + date */}
+              {/* Left side */}
               <div className="flex items-center gap-3">
                 <span className="text-violet-400 text-2xl">{getIcon()}</span>
                 <div>
                   <p className="font-semibold">Wallet Funding</p>
                   <p className="text-gray-400 text-sm">
-                    {new Date(tx.created_at).toLocaleDateString()}
+                    {new Date(tx.created_at).toLocaleString()}
                   </p>
                 </div>
               </div>
 
-              {/* Right side: amount + status */}
+              {/* Right side */}
               <div className="flex items-center gap-3">
-                <p className="font-bold text-green-400">
+                <p
+                  className={`font-bold ${
+                    tx.status === "success"
+                      ? "text-green-400"
+                      : tx.status === "pending"
+                        ? "text-yellow-400"
+                        : "text-red-400"
+                  }`}
+                >
                   ₦{Number(tx.amount).toFixed(2)}
                 </p>
                 {getStatusIcon(tx.status)}

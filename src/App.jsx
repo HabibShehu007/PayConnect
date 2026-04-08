@@ -9,6 +9,7 @@ import DataPage from "./pages/DataPage";
 import TransactionsPage from "./pages/TransactionsPage";
 import ActivityPage from "./pages/Activity";
 import AddMoney from "./pages/AddMoney";
+import UtilityPage from "./pages/UtilityPage";
 function App() {
   return (
     <BrowserRouter>
@@ -28,6 +29,7 @@ function App() {
           <Route path="/transactions" element={<TransactionsPage />} />
           <Route path="/activity" element={<ActivityPage />} />
           <Route path="/add-money" element={<AddMoney />} />
+          <Route path="/utility" element={<UtilityPage />} />
         </Routes>
       </div>
     </BrowserRouter>

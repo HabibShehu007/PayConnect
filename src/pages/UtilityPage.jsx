@@ -1,13 +1,11 @@
 import { useState, useEffect } from "react";
-import { FiArrowLeft } from "react-icons/fi";
+import { FiArrowLeft, FiZap } from "react-icons/fi";
 import { Link } from "react-router-dom";
-import AdSlider from "../components/AdSlider";
-import NetworkDetector from "../components/NetworkDetector";
 import Modal from "../components/Modal";
 import { supabase } from "../supabaseClient";
 
-export default function AirtimePage() {
-  const [phone, setPhone] = useState("");
+export default function UtilityPage() {
+  const [meterNumber, setMeterNumber] = useState("");
   const [amount, setAmount] = useState("");
   const [userId, setUserId] = useState(null);
   const [balance, setBalance] = useState(0);
@@ -19,57 +17,43 @@ export default function AirtimePage() {
   const [modalType, setModalType] = useState("success");
   const [modalMessage, setModalMessage] = useState("");
 
-  const quickAmounts = [50, 100, 200, 500, 1000, 2000];
-
   // ✅ Get logged-in user and balance
   useEffect(() => {
-    let mounted = true;
-
     const fetchUser = async () => {
       const {
         data: { session },
-        error,
       } = await supabase.auth.getSession();
-      if (error) {
-        console.error("Auth error:", error);
-        return;
-      }
       const id = session?.user?.id;
-      if (mounted && id) {
-        setUserId(id);
+      setUserId(id);
 
+      if (id) {
         const { data: profile } = await supabase
           .from("user_profile")
           .select("wallet_balance")
           .eq("id", id)
           .single();
-
         setBalance(profile?.wallet_balance || 0);
       }
     };
-
     fetchUser();
-    return () => {
-      mounted = false;
-    };
   }, []);
 
   const handlePurchase = async () => {
     const amt = parseInt(amount);
 
-    if (!phone || !amt) return;
+    if (!meterNumber || !amt) return;
 
     if (balance < amt) {
       setModalType("error");
       setModalMessage("Insufficient balance to complete this purchase.");
 
-      // ❌ Log failed attempt into activities
+      // ❌ Log failed utility attempt
       await supabase.from("activities").insert({
         user_id: userId,
-        service: "airtime",
+        service: "utility",
         amount: amt,
         status: "failed",
-        meta: { phone },
+        meta: { meterNumber, utility: "electricity" },
       });
 
       setShowResultModal(true);
@@ -90,23 +74,23 @@ export default function AirtimePage() {
       // ❌ Log failed attempt
       await supabase.from("activities").insert({
         user_id: userId,
-        service: "airtime",
+        service: "utility",
         amount: amt,
         status: "failed",
-        meta: { phone },
+        meta: { meterNumber, utility: "electricity" },
       });
     } else {
       setBalance(newBalance);
       setModalType("success");
-      setModalMessage(`Airtime purchase of ₦${amt} successful!`);
+      setModalMessage(`Electricity recharge of ₦${amt} successful!`);
 
-      // ✅ Log successful purchase
+      // ✅ Log successful utility purchase
       await supabase.from("activities").insert({
         user_id: userId,
-        service: "airtime",
+        service: "utility",
         amount: amt,
         status: "success",
-        meta: { phone },
+        meta: { meterNumber, utility: "electricity" },
       });
     }
 
@@ -135,73 +119,36 @@ export default function AirtimePage() {
           >
             <FiArrowLeft size={28} />
           </Link>
-          <h1 className="text-2xl font-bold text-violet-400">Airtime</h1>
+          <h1 className="text-2xl font-bold text-violet-400">Utilities</h1>
         </div>
 
-        {/* Ads */}
-        <AdSlider
-          banners={[
-            { img: "/images/airtime1.png", text: "Recharge instantly" },
-            { img: "/images/airtime2.png", text: "Earn cashback" },
-          ]}
-        />
-
-        {/* Phone Number */}
+        {/* Electricity Section */}
         <div className="bg-gray-100/10 rounded-lg p-5">
-          <div className="bg-slate-800 rounded-xl shadow-lg flex items-center overflow-hidden">
-            <NetworkDetector phone={phone} />
-            <input
-              type="tel"
-              value={phone}
-              onChange={(e) => setPhone(e.target.value)}
-              className="flex-1 p-4 bg-slate-700 text-white focus:outline-none text-lg"
-              placeholder="Enter phone number"
-            />
-          </div>
-        </div>
-
-        {/* Quick Amounts */}
-        <div className="bg-gray-100/10 rounded-lg p-5">
-          <h2 className="text-gray-300 mb-4 text-lg font-semibold">
-            Quick Top‑Up
+          <h2 className="text-gray-300 mb-4 text-lg font-semibold flex items-center gap-2">
+            <FiZap /> Electricity Recharge
           </h2>
-          <div className="grid grid-cols-3 gap-5">
-            {quickAmounts.map((amt) => (
-              <button
-                key={amt}
-                onClick={() => setAmount(amt)}
-                className="bg-slate-700 hover:bg-slate-600 text-violet-400 font-bold py-5 rounded-lg shadow-md transition text-lg"
-              >
-                ₦{amt}
-              </button>
-            ))}
-          </div>
+          <input
+            type="text"
+            value={meterNumber}
+            onChange={(e) => setMeterNumber(e.target.value)}
+            className="w-full mb-4 p-4 bg-slate-700 text-white rounded-lg"
+            placeholder="Enter Meter Number"
+          />
+          <input
+            type="number"
+            value={amount}
+            onChange={(e) => setAmount(e.target.value)}
+            className="w-full mb-4 p-4 bg-slate-700 text-white rounded-lg"
+            placeholder="Enter Amount"
+          />
+          <button
+            disabled={!meterNumber || !amount}
+            onClick={() => setShowPinModal(true)}
+            className="bg-violet-600 hover:bg-violet-700 text-white font-semibold px-6 py-3 text-lg transition rounded-lg w-full"
+          >
+            Pay
+          </button>
         </div>
-
-        {/* Custom Amount */}
-        <div className="bg-gray-100/10 rounded-lg p-5">
-          <h2 className="text-gray-300 mb-4 text-lg font-semibold">
-            Enter Amount
-          </h2>
-          <div className="flex items-center bg-slate-800 rounded-lg shadow-lg overflow-hidden">
-            <input
-              type="number"
-              value={amount}
-              onChange={(e) => setAmount(e.target.value)}
-              className="flex-1 p-4 bg-slate-700 text-white focus:outline-none text-lg"
-              placeholder="Enter amount"
-            />
-            <button
-              disabled={!phone || !amount}
-              onClick={() => setShowPinModal(true)}
-              className="bg-violet-600 hover:bg-violet-700 text-white font-semibold px-6 py-3 text-lg transition"
-            >
-              Pay
-            </button>
-          </div>
-        </div>
-
-        <div className="h-20"></div>
       </div>
 
       {/* PIN Modal */}
