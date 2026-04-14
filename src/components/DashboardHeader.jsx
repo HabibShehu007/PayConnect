@@ -3,10 +3,9 @@ import {
   FiUser,
   FiSettings,
   FiCreditCard,
-  FiBell,
-  FiHelpCircle,
   FiLogOut,
   FiMenu,
+  FiActivity,
 } from "react-icons/fi";
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
@@ -116,14 +115,6 @@ export default function DashboardHeader() {
                 <hr className="border-violet-600/40" />
 
                 <a
-                  href="/settings"
-                  className="flex items-center gap-3 text-violet-400 hover:text-violet-300 font-semibold transition"
-                >
-                  <FiSettings size={20} /> Settings
-                </a>
-                <hr className="border-violet-600/40" />
-
-                <a
                   href="/transactions"
                   className="flex items-center gap-3 text-violet-400 hover:text-violet-300 font-semibold transition"
                 >
@@ -132,18 +123,18 @@ export default function DashboardHeader() {
                 <hr className="border-violet-600/40" />
 
                 <a
-                  href="/notifications"
+                  href="/activity"
                   className="flex items-center gap-3 text-violet-400 hover:text-violet-300 font-semibold transition"
                 >
-                  <FiBell size={20} /> Notifications
+                  <FiActivity size={20} /> Activity
                 </a>
                 <hr className="border-violet-600/40" />
 
                 <a
-                  href="/help"
+                  href="/settings"
                   className="flex items-center gap-3 text-violet-400 hover:text-violet-300 font-semibold transition"
                 >
-                  <FiHelpCircle size={20} /> Help
+                  <FiSettings size={20} /> Settings
                 </a>
                 <hr className="border-violet-600/40" />
 

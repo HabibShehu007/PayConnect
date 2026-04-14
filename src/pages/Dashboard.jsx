@@ -11,10 +11,10 @@ import Modal from "../components/Modal";
 import {
   FiSmartphone,
   FiWifi,
-  FiBookOpen,
+  FiUser,
   FiZap,
   FiCreditCard,
-  FiHelpCircle,
+  FiSettings,
 } from "react-icons/fi";
 
 const activities = [
@@ -64,12 +64,6 @@ export default function Dashboard({ user }) {
           onClick={() => handleRestrictedNav("/data")}
         />
         <Card
-          icon={<FiBookOpen />}
-          title="Exams"
-          description="Pay for exam registrations."
-          link="/exams"
-        />
-        <Card
           icon={<FiZap />}
           title="Utility"
           description="Pay electricity and bills."
@@ -82,10 +76,17 @@ export default function Dashboard({ user }) {
           link="/transactions"
         />
         <Card
-          icon={<FiHelpCircle />}
-          title="Support"
-          description="Get help and support."
-          link="/support"
+          icon={<FiUser />}
+          title="My Profile"
+          description="Manage your profile and settings."
+          link="/profile"
+        />
+
+        <Card
+          icon={<FiSettings />}
+          title="Settings"
+          description="Configure your account preferences."
+          link="/settings"
         />
       </div>
 
