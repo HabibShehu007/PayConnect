@@ -310,6 +310,7 @@ export default function UtilityPage() {
             onChange={(e) => setDecoderNumber(e.target.value)}
             className="w-full mb-4 p-3 rounded bg-slate-700 text-white"
             placeholder="Enter Decoder Number"
+            maxLength={11}
           />
           <input
             type="number"

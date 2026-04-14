@@ -10,6 +10,12 @@ import TransactionsPage from "./pages/TransactionsPage";
 import ActivityPage from "./pages/Activity";
 import AddMoney from "./pages/AddMoney";
 import UtilityPage from "./pages/UtilityPage";
+// Admin Pages
+import AdminLogin from "./admin/AdminLogin";
+import AdminDashbaord from "./admin/AdminDashboard";
+import AdminUsers from "./admin/AdminUsers";
+import AdminActivities from "./admin/AdminActivities";
+import AdminTransactions from "./admin/AdminTransactions";
 function App() {
   return (
     <BrowserRouter>
@@ -30,6 +36,12 @@ function App() {
           <Route path="/activity" element={<ActivityPage />} />
           <Route path="/add-money" element={<AddMoney />} />
           <Route path="/utility" element={<UtilityPage />} />
+          {/* Admin Routes */}
+          <Route path="/admin-login" element={<AdminLogin />} />
+          <Route path="/admin-dashboard" element={<AdminDashbaord />} />
+          <Route path="/admin-users" element={<AdminUsers />} />
+          <Route path="/admin-activities" element={<AdminActivities />} />
+          <Route path="/admin-transactions" element={<AdminTransactions />} />
         </Routes>
       </div>
     </BrowserRouter>

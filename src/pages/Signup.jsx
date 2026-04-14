@@ -54,9 +54,10 @@ export default function Signup() {
         const { error: profileError } = await supabase
           .from("user_profile")
           .insert({
-            id: userId,
+            id: userId, // same UUID as auth.users
             full_name: fullName,
             phone_number: phone,
+            email: email, // NEW: store email here
           });
 
         if (profileError) {
@@ -246,11 +247,18 @@ export default function Signup() {
           )}
         </button>
 
-        {/* Login Link */}
+        {/* Login Links */}
         <p className="text-center text-gray-400 mt-4">
           Already have an account?{" "}
           <Link to="/login" className="text-violet-400 hover:underline">
             Login
+          </Link>
+        </p>
+
+        <p className="text-center text-gray-400 mt-2">
+          Admin access?{" "}
+          <Link to="/admin-login" className="text-violet-400 hover:underline">
+            Admin Login
           </Link>
         </p>
       </form>
