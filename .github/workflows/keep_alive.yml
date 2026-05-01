@@ -2,16 +2,27 @@ name: Keep Supabase Alive
 
 on:
   schedule:
-    # This runs at 00:00 (Midnight) every single day
+    # Runs at 00:00 every day
     - cron: '0 0 * * *'
-  workflow_dispatch: # Allows you to run it manually to test
+  workflow_dispatch: 
 
 jobs:
   ping_supabase:
     runs-on: ubuntu-latest
     steps:
-      - name: Ping Supabase API
+      - name: Ping All Tables
         run: |
-          curl -X GET "${{ secrets.SUPABASE_URL }}/rest/v1/user_profile?select=id&limit=1" \
+          echo "Pinging user_profile..."
+          curl -f -X GET "${{ secrets.SUPABASE_URL }}/rest/v1/user_profile?select=id&limit=1" \
+          -H "apikey: ${{ secrets.SUPABASE_KEY }}" \
+          -H "Authorization: Bearer ${{ secrets.SUPABASE_KEY }}"
+
+          echo "Pinging transaction..."
+          curl -f -X GET "${{ secrets.SUPABASE_URL }}/rest/v1/transactions?select=id&limit=1" \
+          -H "apikey: ${{ secrets.SUPABASE_KEY }}" \
+          -H "Authorization: Bearer ${{ secrets.SUPABASE_KEY }}"
+
+          echo "Pinging activities..."
+          curl -f -X GET "${{ secrets.SUPABASE_URL }}/rest/v1/activities?select=id&limit=1" \
           -H "apikey: ${{ secrets.SUPABASE_KEY }}" \
           -H "Authorization: Bearer ${{ secrets.SUPABASE_KEY }}"
